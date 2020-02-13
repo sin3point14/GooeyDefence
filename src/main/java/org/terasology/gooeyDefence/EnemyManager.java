@@ -39,6 +39,7 @@ import org.terasology.gooeyDefence.movement.events.RepathEnemyRequest;
 import org.terasology.logic.delay.DelayManager;
 import org.terasology.logic.inventory.events.DropItemEvent;
 import org.terasology.logic.location.LocationComponent;
+import org.terasology.math.geom.Quat4f;
 import org.terasology.math.geom.Vector3f;
 import org.terasology.math.geom.Vector3i;
 import org.terasology.registry.In;
@@ -156,6 +157,12 @@ public class EnemyManager extends BaseComponentSystem {
             destroyEnemy(entity);
         } else {
             pathComponent.nextStep();
+            LocationComponent locationComponent = entity.getComponent(LocationComponent.class);
+            Quat4f entityRot = locationComponent.getLocalRotation();
+            Quat4f rot = new Quat4f( new Vector3f(0.0f, 1.0f, 0.0f), (float)Math.PI/2);
+            entityRot.mul(rot);
+            locationComponent.setLocalRotation(entityRot);
+            entity.saveComponent(locationComponent);
             MovementComponent component = entity.getComponent(MovementComponent.class);
             component.goal = pathComponent.getGoal();
         }
